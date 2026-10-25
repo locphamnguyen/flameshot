@@ -195,7 +195,7 @@ static QMap<QString, QSharedPointer<KeySequence>> recognizedShortcuts = {
     SHORTCUT("TYPE_REDO"                ,   "Ctrl+Shift+Z"          ),
     SHORTCUT("TYPE_TEXT"                ,   "T"                     ),
     SHORTCUT("TYPE_TOGGLE_PANEL"        ,   "Space"                 ),
-    SHORTCUT("TYPE_GRAB_COLOR"          ,   "G"                     ),
+    SHORTCUT("TYPE_GRAB_COLOR"          ,   "Shift+G"               ),
     SHORTCUT("TYPE_RESIZE_LEFT"         ,   "Shift+Left"            ),
     SHORTCUT("TYPE_RESIZE_RIGHT"        ,   "Shift+Right"           ),
     SHORTCUT("TYPE_RESIZE_UP"           ,   "Shift+Up"              ),
@@ -221,10 +221,10 @@ static QMap<QString, QSharedPointer<KeySequence>> recognizedShortcuts = {
     SHORTCUT("TYPE_DELETE_CURRENT_TOOL" ,   "Delete"                ),
 #endif
     SHORTCUT("TYPE_PIN"                 ,                           ),
-    SHORTCUT("TYPE_BACKGROUND"          ,                           ),
+    SHORTCUT("TYPE_BACKGROUND"          ,   "G"                     ),
     SHORTCUT("TYPE_SIZEINCREASE"        ,                           ),
     SHORTCUT("TYPE_SIZEDECREASE"        ,                           ),
-    SHORTCUT("TYPE_CIRCLECOUNT"         ,                           ),
+    SHORTCUT("TYPE_CIRCLECOUNT"         ,   "N"                     ),
     SHORTCUT("TYPE_CLOSE_ACTIVE_PIN_WINDOW"      ,   "Ctrl+Q"                ),
 };
 // clang-format on
