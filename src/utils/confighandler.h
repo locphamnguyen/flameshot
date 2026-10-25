@@ -151,12 +151,12 @@ public:
     CONFIG_GETTER_SETTER(backgroundImage, setBackgroundImage, QString)
     CONFIG_GETTER_SETTER(backgroundBlur, setBackgroundBlur, int)
     CONFIG_GETTER_SETTER(backgroundPadding, setBackgroundPadding, int)
-    CONFIG_GETTER_SETTER(backgroundCornerRadius,
-                         setBackgroundCornerRadius,
-                         int)
+    CONFIG_GETTER_SETTER(backgroundCornerRadius, setBackgroundCornerRadius, int)
     CONFIG_GETTER_SETTER(backgroundShadow, setBackgroundShadow, int)
     CONFIG_GETTER_SETTER(backgroundBorderWidth, setBackgroundBorderWidth, int)
-    CONFIG_GETTER_SETTER(backgroundBorderColor, setBackgroundBorderColor, QColor)
+    CONFIG_GETTER_SETTER(backgroundBorderColor,
+                         setBackgroundBorderColor,
+                         QColor)
     CONFIG_GETTER_SETTER(backgroundAspectRatio,
                          setBackgroundAspectRatio,
                          QString)

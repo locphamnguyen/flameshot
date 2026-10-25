@@ -71,6 +71,10 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
     auto* grid = new QGridLayout(m_gradients);
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setSpacing(2);
+    // Native styles barely show the checked state of a tool button
+    m_gradients->setStyleSheet(QStringLiteral(
+      "QToolButton { border: 2px solid transparent; border-radius: 4px; }"
+      "QToolButton:checked { border-color: palette(highlight); }"));
     const auto& presets = BackgroundRenderer::gradientPresets();
     for (qsizetype i = 0; i < presets.size(); ++i) {
         auto* button = new QToolButton(m_gradients);
@@ -116,8 +120,8 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
         }
     });
 
-    m_blurRow =
-      addSlider(tr("Blur"), 100, QStringLiteral(" px"), &BackgroundSettings::blur);
+    m_blurRow = addSlider(
+      tr("Blur"), 100, QStringLiteral(" px"), &BackgroundSettings::blur);
     addSlider(tr("Padding"),
               50,
               QStringLiteral(" %"),
@@ -134,7 +138,8 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
               QStringLiteral(" px"),
               &BackgroundSettings::borderWidth,
               &borderLayout);
-    borderLayout->addWidget(createColorButton(&BackgroundSettings::borderColor));
+    borderLayout->addWidget(
+      createColorButton(&BackgroundSettings::borderColor));
 
     for (const QString& id : BackgroundRenderer::aspectRatioIds()) {
         m_aspectRatio->addItem(
@@ -172,8 +177,8 @@ QWidget* BackgroundEditor::addSlider(const QString& label,
     auto* slider = new QSlider(Qt::Horizontal, row);
     slider->setRange(0, max);
     auto* value = new QLabel(QStringLiteral("0") + suffix, row);
-    value->setMinimumWidth(value->fontMetrics().horizontalAdvance(
-      QString::number(max) + suffix));
+    value->setMinimumWidth(
+      value->fontMetrics().horizontalAdvance(QString::number(max) + suffix));
     layout->addWidget(slider);
     layout->addWidget(value);
     m_layout->addRow(label, row);
@@ -197,8 +202,8 @@ QPushButton* BackgroundEditor::createColorButton(
     button->setIconSize(QSize(SWATCH_SIZE, SWATCH_SIZE / 2));
     m_colorButtons.append({ button, member });
     connect(button, &QPushButton::clicked, this, [=, this]() {
-        QColor color =
-          QColorDialog::getColor(m_settings.*member, this, tr("Choose a color"));
+        QColor color = QColorDialog::getColor(
+          m_settings.*member, this, tr("Choose a color"));
         if (color.isValid()) {
             m_settings.*member = color;
             notify();

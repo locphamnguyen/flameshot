@@ -79,8 +79,8 @@ const QList<GradientPreset> GRADIENTS = {
     { "carbon", "Carbon", { "#1c1c1c", "#383838" }, false, 180 },
 };
 
-const QStringList ASPECT_RATIOS = { "auto", "1:1",  "4:3",   "3:2",
-                                    "16:9", "21:9", "2:1",   "1.91:1",
+const QStringList ASPECT_RATIOS = { "auto", "1:1",  "4:3", "3:2",
+                                    "16:9", "21:9", "2:1", "1.91:1",
                                     "4:5",  "3:4",  "9:16" };
 
 // Shadow color and offset, relative to the shadow blur radius
@@ -137,13 +137,12 @@ QImage blurred(const QImage& source, int radius)
         return source;
     }
     const int scale = qMax(1, radius / BLUR_DOWNSCALE_STEP);
-    QImage img =
-      source
-        .scaled(qMax(1, source.width() / scale),
-                qMax(1, source.height() / scale),
-                Qt::IgnoreAspectRatio,
-                Qt::SmoothTransformation)
-        .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    QImage img = source
+                   .scaled(qMax(1, source.width() / scale),
+                           qMax(1, source.height() / scale),
+                           Qt::IgnoreAspectRatio,
+                           Qt::SmoothTransformation)
+                   .convertToFormat(QImage::Format_ARGB32_Premultiplied);
     const int passRadius = qMax(1, radius / scale / 2);
     for (int i = 0; i < BLUR_PASSES; ++i) {
         boxBlurPass(img, passRadius, true);
@@ -157,8 +156,8 @@ QImage blurred(const QImage& source, int radius)
 QImage coverImage(const QImage& image, const QSize& size)
 {
     QSize scaled = image.size().scaled(size, Qt::KeepAspectRatioByExpanding);
-    QImage result = image.scaled(
-      scaled, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QImage result =
+      image.scaled(scaled, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     return result.copy((result.width() - size.width()) / 2,
                        (result.height() - size.height()) / 2,
                        size.width(),
@@ -203,8 +202,8 @@ void paintBackdrop(QPainter& painter,
         case BackgroundSettings::IMAGE: {
             QImage image = loadBackgroundImage(s.imagePath);
             if (!image.isNull()) {
-                image = blurred(coverImage(image, rect.size()),
-                                qRound(s.blur * dpr));
+                image =
+                  blurred(coverImage(image, rect.size()), qRound(s.blur * dpr));
                 painter.drawImage(rect.topLeft(), image);
                 return;
             }
@@ -263,8 +262,8 @@ void paintGradient(QPainter& painter,
     QLinearGradient linear;
     QRadialGradient radial;
     if (preset.radial) {
-        radial = QRadialGradient(rect.center(),
-                                 qMax(rect.width(), rect.height()) / 2);
+        radial =
+          QRadialGradient(rect.center(), qMax(rect.width(), rect.height()) / 2);
         gradient = &radial;
     } else {
         // Same geometry as a CSS linear-gradient(<angle>deg, ...)
@@ -299,7 +298,8 @@ QColor dominantEdgeColor(const QImage& image)
                       .convertToFormat(QImage::Format_ARGB32);
     qint64 r = 0, g = 0, b = 0, count = 0;
     for (int y = 0; y < sampleSize; ++y) {
-        const auto* row = reinterpret_cast<const QRgb*>(sample.constScanLine(y));
+        const auto* row =
+          reinterpret_cast<const QRgb*>(sample.constScanLine(y));
         const bool edgeRow = y < edge || y >= sampleSize - edge;
         for (int x = 0; x < sampleSize; ++x) {
             if (edgeRow || x < edge || x >= sampleSize - edge) {
@@ -329,8 +329,7 @@ QPixmap render(const QPixmap& capture, const BackgroundSettings& s)
     const int padding = qRound(s.paddingPercent / 100.0 * qMin(w, h));
     const int border = qRound(s.borderWidth * dpr);
     const int shadow = qRound(s.shadow * dpr);
-    const qreal radius =
-      qMin<qreal>(s.cornerRadius * dpr, qMin(w, h) / 2.0);
+    const qreal radius = qMin<qreal>(s.cornerRadius * dpr, qMin(w, h) / 2.0);
 
     int outW = w + 2 * padding;
     int outH = h + 2 * padding;
@@ -356,9 +355,8 @@ QPixmap render(const QPixmap& capture, const BackgroundSettings& s)
     if (shadow > 0) {
         // Blurred silhouette of the capture, drawn below and slightly offset
         const int margin = 2 * shadow;
-        QImage silhouette(w + 2 * margin,
-                          h + 2 * margin,
-                          QImage::Format_ARGB32_Premultiplied);
+        QImage silhouette(
+          w + 2 * margin, h + 2 * margin, QImage::Format_ARGB32_Premultiplied);
         silhouette.fill(Qt::transparent);
         QPainter sp(&silhouette);
         sp.setRenderHint(QPainter::Antialiasing);
@@ -384,8 +382,9 @@ QPixmap render(const QPixmap& capture, const BackgroundSettings& s)
         const qreal half = border / 2.0;
         painter.setBrush(Qt::NoBrush);
         painter.setPen(QPen(s.borderColor, border));
-        painter.drawRoundedRect(
-          shotRect.adjusted(-half, -half, half, half), radius + half, radius + half);
+        painter.drawRoundedRect(shotRect.adjusted(-half, -half, half, half),
+                                radius + half,
+                                radius + half);
     }
     painter.end();
 

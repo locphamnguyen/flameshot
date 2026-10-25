@@ -51,6 +51,7 @@ constexpr const char* visibleInDockProperty = "_visibleInDock";
 #include "utils/confighandler.h"
 #include "utils/screengrabber.h"
 #include "utils/screenshotsaver.h"
+#include "widgets/backgroundwindow.h"
 #include "widgets/capture/capturewidget.h"
 #include "widgets/capturelauncher.h"
 #include "widgets/infowindow.h"
@@ -480,6 +481,15 @@ void Flameshot::exportCapture(const QPixmap& rawCapture,
         QTextStream(stdout)
           << selection.width() << "x" << selection.height() << "+"
           << selection.x() << "+" << selection.y() << "\n";
+    }
+
+    if (req.openBackgroundEditor()) {
+        // The editor exports the decorated capture itself
+        setExternalWidget(true);
+        auto* window = new BackgroundWindow(rawCapture, selection, req);
+        window->show();
+        window->activateWindow();
+        return;
     }
 
     if (tasks & CR::PRINT_RAW) {

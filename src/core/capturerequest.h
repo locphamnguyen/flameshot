@@ -62,6 +62,9 @@ public:
     bool hasSelectedMonitor() const;
     void setBackgroundMode(BackgroundMode mode);
     BackgroundMode backgroundMode() const;
+    // Open the capture in the background editor instead of exporting it
+    void setOpenBackgroundEditor(bool open);
+    bool openBackgroundEditor() const;
 
 private:
     CaptureMode m_mode;
@@ -73,6 +76,7 @@ private:
     int m_selectedMonitor;
     bool m_hasSelectedMonitor;
     BackgroundMode m_backgroundMode;
+    bool m_openBackgroundEditor;
 
     CaptureRequest() {}
 };

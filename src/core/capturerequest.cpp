@@ -17,6 +17,7 @@ CaptureRequest::CaptureRequest(CaptureRequest::CaptureMode mode,
   , m_selectedMonitor(-1)
   , m_hasSelectedMonitor(false)
   , m_backgroundMode(BACKGROUND_FROM_CONFIG)
+  , m_openBackgroundEditor(false)
 {}
 
 CaptureRequest::CaptureMode CaptureRequest::captureMode() const
@@ -103,4 +104,14 @@ void CaptureRequest::setBackgroundMode(BackgroundMode mode)
 CaptureRequest::BackgroundMode CaptureRequest::backgroundMode() const
 {
     return m_backgroundMode;
+}
+
+void CaptureRequest::setOpenBackgroundEditor(bool open)
+{
+    m_openBackgroundEditor = open;
+}
+
+bool CaptureRequest::openBackgroundEditor() const
+{
+    return m_openBackgroundEditor;
 }

@@ -9,6 +9,7 @@ target_sources(
         capturelauncher.ui
 
         backgroundeditor.h
+        backgroundwindow.h
         capturelauncher.h
         draggablewidgetmaker.h
         imagelabel.h
@@ -38,6 +39,7 @@ target_sources(
         flameshot
         PRIVATE
         backgroundeditor.cpp
+        backgroundwindow.cpp
         capturelauncher.cpp
         draggablewidgetmaker.cpp
         imagelabel.cpp

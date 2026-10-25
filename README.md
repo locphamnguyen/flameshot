@@ -98,6 +98,7 @@
 - In-app screenshot editing.
 - DBus interface.
 - Upload to Imgur.
+- Put captures on a background (gradient, color, image) with padding, rounded corners and shadow.
 
 ## Usage
 
@@ -151,6 +152,30 @@ Example commands:
     ```
 
 In case of doubt choose the first or the second command as shortcut in your favorite desktop environment.
+
+### Background
+
+Flameshot can put a capture on a decorative background before exporting it, similar to
+[beautiFULLshot](https://github.com/itsddvn/beautiFULLshot):
+
+- Backgrounds: 24 gradient presets, a solid color, the average color of the capture edges, a
+  custom image (with optional blur) or transparent.
+- Padding, corner radius, drop shadow, border and an output aspect ratio (1:1, 16:9, 9:16, 4:5...).
+
+There are three ways to use it:
+
+- Click the **Background** button of the capture toolbar to open the capture in the background
+  editor, adjust it with a live preview, then copy, save or pin the result.
+- Enable "Put every capture on this background when it is exported" in the **Background** tab of
+  the configuration window.
+- Pass `--background` to `flameshot gui`, `flameshot screen` or `flameshot full`:
+
+    ```shell
+    flameshot full --background -c
+    ```
+
+The settings are shared by the three methods and are stored in the `background*` keys of the
+config file.
 
 A systray icon will be in your system's panel while Flameshot is running.
 Do a right click on the tray icon and you'll see some menu items to open the configuration window and the information window.

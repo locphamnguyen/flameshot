@@ -89,7 +89,7 @@ ConfigWindow::ConfigWindow(QWidget* parent)
     m_backgroundTab->setLayout(backgroundLayout);
     backgroundLayout->addWidget(m_backgroundConf);
     m_tabWidget->addTab(
-      m_backgroundTab, QIcon(modifier + "image.svg"), tr("Background"));
+      m_backgroundTab, QIcon(modifier + "background.svg"), tr("Background"));
 
     // shortcuts
     m_shortcuts = new ShortcutsWidget();
