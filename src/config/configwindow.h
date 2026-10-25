@@ -5,6 +5,7 @@
 
 #include <QTabWidget>
 
+class BackgroundConf;
 class FileNameEditor;
 class ShortcutsWidget;
 class GeneralConf;
@@ -29,6 +30,8 @@ private:
 
     FileNameEditor* m_filenameEditor;
     QWidget* m_filenameEditorTab;
+    BackgroundConf* m_backgroundConf;
+    QWidget* m_backgroundTab;
 
     ShortcutsWidget* m_shortcuts;
     QWidget* m_shortcutsTab;

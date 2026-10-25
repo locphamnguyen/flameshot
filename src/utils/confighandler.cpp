@@ -113,6 +113,19 @@ static QMap<class QString, QSharedPointer<ValueHandler>>
     OPTION("buttons"                     ,ButtonList         ( {}            )),
     // Filename Editor tab
     OPTION("filenamePattern"             ,FilenamePattern    ( {}            )),
+    // Background tab
+    OPTION("backgroundAutoApply"         ,Bool               ( false         )),
+    OPTION("backgroundType"              ,BoundedInt         ( 0, 4, 0       )),
+    OPTION("backgroundGradient"          ,String             ( "ocean"       )),
+    OPTION("backgroundColor"             ,Color              ( Qt::white     )),
+    OPTION("backgroundImage"             ,String             ( ""            )),
+    OPTION("backgroundBlur"              ,BoundedInt         ( 0, 100, 0     )),
+    OPTION("backgroundPadding"           ,BoundedInt         ( 0, 50, 5      )),
+    OPTION("backgroundCornerRadius"      ,BoundedInt         ( 0, 100, 12    )),
+    OPTION("backgroundShadow"            ,BoundedInt         ( 0, 100, 30    )),
+    OPTION("backgroundBorderWidth"       ,BoundedInt         ( 0, 50, 0      )),
+    OPTION("backgroundBorderColor"       ,Color              ( Qt::black     )),
+    OPTION("backgroundAspectRatio"       ,String             ( "auto"        )),
     // Others
     // drawThickness shared by Pencil, Line, Arrow, Rectangular Selection, Circle
     OPTION("drawThickness"               ,LowerBoundedInt    ( 1, 3          )),

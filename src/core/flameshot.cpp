@@ -47,6 +47,7 @@ constexpr const char* visibleInDockProperty = "_visibleInDock";
 #include "config/configwindow.h"
 #include "core/qguiappcurrentscreen.h"
 #include "utils/abstractlogger.h"
+#include "utils/backgroundrenderer.h"
 #include "utils/confighandler.h"
 #include "utils/screengrabber.h"
 #include "utils/screenshotsaver.h"
@@ -454,13 +455,26 @@ void Flameshot::requestCapture(const CaptureRequest& request)
     }
 }
 
-void Flameshot::exportCapture(const QPixmap& capture,
+void Flameshot::exportCapture(const QPixmap& rawCapture,
                               QRect& selection,
                               const CaptureRequest& req)
 {
     using CR = CaptureRequest;
     int tasks = req.tasks(), mode = req.captureMode();
     QString path = req.path();
+
+    QPixmap capture = rawCapture;
+    QRect pinGeometry = selection;
+    const auto backgroundMode = req.backgroundMode();
+    if (backgroundMode == CR::BACKGROUND_ALWAYS ||
+        (backgroundMode == CR::BACKGROUND_FROM_CONFIG &&
+         ConfigHandler().backgroundAutoApply())) {
+        capture = BackgroundRenderer::render(rawCapture,
+                                             BackgroundSettings::fromConfig());
+        // Keep the pinned capture centered on the original selection
+        pinGeometry.setSize(capture.deviceIndependentSize().toSize());
+        pinGeometry.moveCenter(selection.center());
+    }
 
     if (tasks & CR::PRINT_GEOMETRY) {
         QTextStream(stdout)
@@ -491,7 +505,7 @@ void Flameshot::exportCapture(const QPixmap& capture,
     }
 
     if (tasks & CR::PIN) {
-        FlameshotDaemon::createPin(capture, selection);
+        FlameshotDaemon::createPin(capture, pinGeometry);
         if (mode == CR::SCREEN_MODE || mode == CR::FULLSCREEN_MODE) {
             AbstractLogger::info()
               << QObject::tr("Full screen screenshot pinned to screen");

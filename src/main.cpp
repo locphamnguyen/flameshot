@@ -307,6 +307,9 @@ int main(int argc, char* argv[])
       { "c", "clipboard" }, QObject::tr("Save the capture to the clipboard"));
     CommandOption pinOption("pin",
                             QObject::tr("Pin the capture to the screen"));
+    CommandOption backgroundOption(
+      "background",
+      QObject::tr("Put the capture on the background set in the config"));
     CommandOption delayOption({ "d", "delay" },
                               QObject::tr("Delay time in milliseconds"),
                               QStringLiteral("milliseconds"));
@@ -442,6 +445,7 @@ int main(int argc, char* argv[])
                         rawImageOption,
                         selectionOption,
                         pinOption,
+                        backgroundOption,
                         acceptOnSelectOption },
                       guiArgument);
     parser.AddOptions({ screenNumberOption,
@@ -451,11 +455,15 @@ int main(int argc, char* argv[])
                         delayOption,
                         regionOption,
                         rawImageOption,
-                        pinOption },
+                        pinOption,
+                        backgroundOption },
                       screenArgument);
-    parser.AddOptions(
-      { pathOption, clipboardOption, delayOption, rawImageOption },
-      fullArgument);
+    parser.AddOptions({ pathOption,
+                        clipboardOption,
+                        delayOption,
+                        rawImageOption,
+                        backgroundOption },
+                      fullArgument);
     parser.AddOptions({ autostartOption,
                         notificationOption,
                         filenameOption,
@@ -510,6 +518,9 @@ int main(int argc, char* argv[])
         bool pin = parser.isSet(pinOption);
         bool acceptOnSelect = parser.isSet(acceptOnSelectOption);
         CaptureRequest req(CaptureRequest::GRAPHICAL_MODE, delay, path);
+        if (parser.isSet(backgroundOption)) {
+            req.setBackgroundMode(CaptureRequest::BACKGROUND_ALWAYS);
+        }
         if (!region.isEmpty()) {
             auto selectionRegion = Region().value(region).toRect();
             req.setInitialSelection(selectionRegion);
@@ -554,6 +565,9 @@ int main(int argc, char* argv[])
         bool raw = parser.isSet(rawImageOption);
 
         CaptureRequest req(CaptureRequest::FULLSCREEN_MODE, delay);
+        if (parser.isSet(backgroundOption)) {
+            req.setBackgroundMode(CaptureRequest::BACKGROUND_ALWAYS);
+        }
         if (clipboard) {
             req.addTask(CaptureRequest::COPY);
         }
@@ -590,6 +604,9 @@ int main(int argc, char* argv[])
         bool edit = parser.isSet(editOption);
 
         CaptureRequest req(CaptureRequest::SCREEN_MODE, delay, screenNumber);
+        if (parser.isSet(backgroundOption)) {
+            req.setBackgroundMode(CaptureRequest::BACKGROUND_ALWAYS);
+        }
         if (edit) {
             req = CaptureRequest(CaptureRequest::GRAPHICAL_MODE, delay);
             if (screenNumber >= 0) {

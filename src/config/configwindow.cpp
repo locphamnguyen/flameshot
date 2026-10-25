@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2017-2019 Alejandro Sirgo Rica & Contributors
 
 #include "configwindow.h"
+#include "config/backgroundconf.h"
 #include "config/configresolver.h"
 #include "config/filenameeditor.h"
 #include "config/generalconf.h"
@@ -81,6 +82,15 @@ ConfigWindow::ConfigWindow(QWidget* parent)
                         QIcon(modifier + "name_edition.svg"),
                         tr("Filename Editor"));
 
+    // background
+    m_backgroundConf = new BackgroundConf();
+    m_backgroundTab = new QWidget();
+    auto* backgroundLayout = new QVBoxLayout(m_backgroundTab);
+    m_backgroundTab->setLayout(backgroundLayout);
+    backgroundLayout->addWidget(m_backgroundConf);
+    m_tabWidget->addTab(
+      m_backgroundTab, QIcon(modifier + "image.svg"), tr("Background"));
+
     // shortcuts
     m_shortcuts = new ShortcutsWidget();
     m_shortcutsTab = new QWidget();
@@ -103,6 +113,10 @@ ConfigWindow::ConfigWindow(QWidget* parent)
             &ConfigWindow::updateChildren,
             m_generalConfig,
             &GeneralConf::updateComponents);
+    connect(this,
+            &ConfigWindow::updateChildren,
+            m_backgroundConf,
+            &BackgroundConf::updateComponents);
 
     // Error indicator (this must come last)
     initErrorIndicator(m_visualsTab, m_visuals);

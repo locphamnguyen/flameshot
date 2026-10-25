@@ -144,6 +144,22 @@ public:
     CONFIG_GETTER_SETTER(reverseArrow, setReverseArrow, bool)
     CONFIG_GETTER_SETTER(arrowStyle, setArrowStyle, int)
     CONFIG_GETTER_SETTER(insecurePixelate, setInsecurePixelate, bool)
+    CONFIG_GETTER_SETTER(backgroundAutoApply, setBackgroundAutoApply, bool)
+    CONFIG_GETTER_SETTER(backgroundType, setBackgroundType, int)
+    CONFIG_GETTER_SETTER(backgroundGradient, setBackgroundGradient, QString)
+    CONFIG_GETTER_SETTER(backgroundColor, setBackgroundColor, QColor)
+    CONFIG_GETTER_SETTER(backgroundImage, setBackgroundImage, QString)
+    CONFIG_GETTER_SETTER(backgroundBlur, setBackgroundBlur, int)
+    CONFIG_GETTER_SETTER(backgroundPadding, setBackgroundPadding, int)
+    CONFIG_GETTER_SETTER(backgroundCornerRadius,
+                         setBackgroundCornerRadius,
+                         int)
+    CONFIG_GETTER_SETTER(backgroundShadow, setBackgroundShadow, int)
+    CONFIG_GETTER_SETTER(backgroundBorderWidth, setBackgroundBorderWidth, int)
+    CONFIG_GETTER_SETTER(backgroundBorderColor, setBackgroundBorderColor, QColor)
+    CONFIG_GETTER_SETTER(backgroundAspectRatio,
+                         setBackgroundAspectRatio,
+                         QString)
     CONFIG_GETTER_SETTER(showSelectionGeometryHideTime,
                          showSelectionGeometryHideTime,
                          int)

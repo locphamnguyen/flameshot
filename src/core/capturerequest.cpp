@@ -16,6 +16,7 @@ CaptureRequest::CaptureRequest(CaptureRequest::CaptureMode mode,
   , m_data(std::move(data))
   , m_selectedMonitor(-1)
   , m_hasSelectedMonitor(false)
+  , m_backgroundMode(BACKGROUND_FROM_CONFIG)
 {}
 
 CaptureRequest::CaptureMode CaptureRequest::captureMode() const
@@ -92,4 +93,14 @@ int CaptureRequest::selectedMonitor() const
 bool CaptureRequest::hasSelectedMonitor() const
 {
     return m_hasSelectedMonitor;
+}
+
+void CaptureRequest::setBackgroundMode(BackgroundMode mode)
+{
+    m_backgroundMode = mode;
+}
+
+CaptureRequest::BackgroundMode CaptureRequest::backgroundMode() const
+{
+    return m_backgroundMode;
 }

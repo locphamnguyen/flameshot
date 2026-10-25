@@ -1,6 +1,7 @@
 target_sources(
   flameshot
-  PRIVATE buttonlistview.cpp
+  PRIVATE backgroundconf.cpp
+          buttonlistview.cpp
           cacheutils.cpp
           clickablelabel.cpp
           colorpickereditmode.cpp

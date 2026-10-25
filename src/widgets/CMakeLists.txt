@@ -8,6 +8,7 @@ target_sources(
         infowindow.ui
         capturelauncher.ui
 
+        backgroundeditor.h
         capturelauncher.h
         draggablewidgetmaker.h
         imagelabel.h
@@ -36,6 +37,7 @@ endif()
 target_sources(
         flameshot
         PRIVATE
+        backgroundeditor.cpp
         capturelauncher.cpp
         draggablewidgetmaker.cpp
         imagelabel.cpp

@@ -29,6 +29,14 @@ public:
         ACCEPT_ON_SELECT = 64,
     };
 
+    // Whether the capture is put on the configured background when exported
+    enum BackgroundMode
+    {
+        BACKGROUND_FROM_CONFIG,
+        BACKGROUND_ALWAYS,
+        BACKGROUND_NEVER,
+    };
+
     CaptureRequest(CaptureMode mode,
                    const uint delay = 0,
                    QVariant data = QVariant(),
@@ -52,6 +60,8 @@ public:
     void setSelectedMonitor(int monitorIndex);
     int selectedMonitor() const;
     bool hasSelectedMonitor() const;
+    void setBackgroundMode(BackgroundMode mode);
+    BackgroundMode backgroundMode() const;
 
 private:
     CaptureMode m_mode;
@@ -62,6 +72,7 @@ private:
     QRect m_pinWindowGeometry, m_initialSelection;
     int m_selectedMonitor;
     bool m_hasSelectedMonitor;
+    BackgroundMode m_backgroundMode;
 
     CaptureRequest() {}
 };
