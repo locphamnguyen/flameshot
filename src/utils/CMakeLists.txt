@@ -12,6 +12,7 @@ target_sources(
 target_sources(
   flameshot
   PRIVATE abstractlogger.cpp
+          backgroundlibrary.cpp
           backgroundrenderer.cpp
           filenamehandler.cpp
           screengrabber.cpp

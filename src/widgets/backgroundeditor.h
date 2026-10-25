@@ -13,7 +13,7 @@ class QButtonGroup;
 class QComboBox;
 class QFormLayout;
 class QHBoxLayout;
-class QLineEdit;
+class QListWidget;
 class QPushButton;
 class QSlider;
 
@@ -42,6 +42,8 @@ private:
     QPushButton* createColorButton(QColor BackgroundSettings::* member);
     void setRowVisible(QWidget* field, bool visible);
     void updateComponents();
+    void refreshGallery();
+    void selectDefaultImage();
     void notify();
 
     BackgroundSettings m_settings;
@@ -53,7 +55,9 @@ private:
     QButtonGroup* m_gradientGroup;
     QPushButton* m_color;
     QWidget* m_imageRow;
-    QLineEdit* m_imagePath;
+    QListWidget* m_gallery;
+    QPushButton* m_removeImage;
+    bool m_galleryLoaded = false;
     QWidget* m_blurRow;
     QComboBox* m_aspectRatio;
     QList<QPair<QSlider*, int BackgroundSettings::*>> m_sliders;

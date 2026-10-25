@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Flameshot Contributors
 
 #include "backgroundeditor.h"
+#include "utils/backgroundlibrary.h"
 
 #include <QButtonGroup>
 #include <QColorDialog>
@@ -12,16 +13,20 @@
 #include <QHBoxLayout>
 #include <QImageReader>
 #include <QLabel>
-#include <QLineEdit>
+#include <QListWidget>
+#include <QMessageBox>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPushButton>
 #include <QSlider>
 #include <QToolButton>
+#include <QVBoxLayout>
 
 namespace {
 constexpr int SWATCH_SIZE = 24;
 constexpr int GRADIENT_COLUMNS = 8;
+constexpr QSize THUMBNAIL_SIZE(72, 46);
+constexpr int GALLERY_VISIBLE_ROWS = 3;
 
 QIcon gradientIcon(const GradientPreset& preset)
 {
@@ -51,7 +56,8 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
   , m_gradients(new QWidget(this))
   , m_gradientGroup(new QButtonGroup(this))
   , m_imageRow(new QWidget(this))
-  , m_imagePath(new QLineEdit(this))
+  , m_gallery(new QListWidget(this))
+  , m_removeImage(new QPushButton(this))
   , m_aspectRatio(new QComboBox(this))
 {
     m_layout->setContentsMargins(0, 0, 0, 0);
@@ -65,6 +71,10 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
     connect(m_type, &QComboBox::currentIndexChanged, this, [this]() {
         m_settings.type =
           static_cast<BackgroundSettings::Type>(m_type->currentData().toInt());
+        if (m_settings.type == BackgroundSettings::IMAGE &&
+            m_settings.imagePath.isEmpty()) {
+            selectDefaultImage();
+        }
         notify();
     });
 
@@ -96,26 +106,75 @@ BackgroundEditor::BackgroundEditor(QWidget* parent)
     m_color = createColorButton(&BackgroundSettings::color);
     m_layout->addRow(tr("Color"), m_color);
 
-    auto* imageLayout = new QHBoxLayout(m_imageRow);
+    auto* imageLayout = new QVBoxLayout(m_imageRow);
     imageLayout->setContentsMargins(0, 0, 0, 0);
-    m_imagePath->setReadOnly(true);
-    m_imagePath->setPlaceholderText(tr("No image selected"));
-    auto* browse = new QPushButton(tr("Browse..."), m_imageRow);
-    imageLayout->addWidget(m_imagePath);
-    imageLayout->addWidget(browse);
+    m_gallery->setViewMode(QListView::IconMode);
+    m_gallery->setIconSize(THUMBNAIL_SIZE);
+    m_gallery->setGridSize(THUMBNAIL_SIZE + QSize(8, 8));
+    m_gallery->setResizeMode(QListView::Adjust);
+    m_gallery->setMovement(QListView::Static);
+    m_gallery->setUniformItemSizes(true);
+    m_gallery->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_gallery->setFixedHeight((THUMBNAIL_SIZE.height() + 8) *
+                                GALLERY_VISIBLE_ROWS +
+                              2 * m_gallery->frameWidth());
+    auto* imageButtons = new QHBoxLayout();
+    auto* addImages = new QPushButton(tr("Add from computer..."), m_imageRow);
+    m_removeImage->setText(tr("Remove"));
+    m_removeImage->setToolTip(tr("Remove the selected image you added"));
+    imageButtons->addWidget(addImages);
+    imageButtons->addWidget(m_removeImage);
+    imageButtons->addStretch();
+    imageLayout->addWidget(m_gallery);
+    imageLayout->addLayout(imageButtons);
     m_layout->addRow(tr("Image"), m_imageRow);
-    connect(browse, &QPushButton::clicked, this, [this]() {
+
+    connect(m_gallery,
+            &QListWidget::currentItemChanged,
+            this,
+            [this](QListWidgetItem* item) {
+                if (item != nullptr && !m_updating) {
+                    m_settings.imagePath = item->data(Qt::UserRole).toString();
+                    notify();
+                }
+            });
+    connect(addImages, &QPushButton::clicked, this, [this]() {
         QStringList patterns;
         for (const QByteArray& format : QImageReader::supportedImageFormats()) {
             patterns << QStringLiteral("*.") + QString::fromLatin1(format);
         }
-        QString path = QFileDialog::getOpenFileName(
+        const QStringList files = QFileDialog::getOpenFileNames(
           this,
-          tr("Choose a background image"),
-          m_settings.imagePath,
+          tr("Add background images"),
+          QString(),
           tr("Images") + " (" + patterns.join(' ') + ")");
-        if (!path.isEmpty()) {
-            m_settings.imagePath = path;
+        QString imported;
+        for (const QString& file : files) {
+            QString copy = BackgroundLibrary::importImage(file);
+            if (copy.isEmpty()) {
+                QMessageBox::warning(
+                  this,
+                  tr("Background"),
+                  tr("Unable to add %1 to the image library").arg(file));
+            } else {
+                imported = copy;
+            }
+        }
+        if (!imported.isEmpty()) {
+            m_settings.imagePath = imported;
+            refreshGallery();
+            notify();
+        }
+    });
+    connect(m_removeImage, &QPushButton::clicked, this, [this]() {
+        QListWidgetItem* item = m_gallery->currentItem();
+        if (item == nullptr) {
+            return;
+        }
+        if (BackgroundLibrary::removeImage(item->data(Qt::UserRole).toString())) {
+            m_settings.imagePath.clear();
+            refreshGallery();
+            selectDefaultImage();
             notify();
         }
     });
@@ -232,7 +291,24 @@ void BackgroundEditor::updateComponents()
             m_gradientGroup->button(static_cast<int>(i))->setChecked(true);
         }
     }
-    m_imagePath->setText(m_settings.imagePath);
+    if (m_settings.type == BackgroundSettings::IMAGE && !m_galleryLoaded) {
+        // Thumbnails are only decoded once the gallery is needed
+        refreshGallery();
+    }
+    QListWidgetItem* selectedImage = nullptr;
+    for (int i = 0; i < m_gallery->count(); ++i) {
+        QListWidgetItem* item = m_gallery->item(i);
+        if (item->data(Qt::UserRole).toString() == m_settings.imagePath) {
+            selectedImage = item;
+        }
+    }
+    m_gallery->setCurrentItem(selectedImage);
+    if (selectedImage == nullptr) {
+        m_gallery->clearSelection();
+    }
+    m_removeImage->setEnabled(
+      selectedImage != nullptr &&
+      !BackgroundLibrary::isBuiltIn(m_settings.imagePath));
     for (const auto& [slider, member] : m_sliders) {
         slider->setValue(m_settings.*member);
     }
@@ -249,6 +325,30 @@ void BackgroundEditor::updateComponents()
     setRowVisible(m_imageRow, type == BackgroundSettings::IMAGE);
     setRowVisible(m_blurRow, type == BackgroundSettings::IMAGE);
     m_updating = false;
+}
+
+void BackgroundEditor::refreshGallery()
+{
+    m_galleryLoaded = true;
+    const bool updating = m_updating;
+    m_updating = true;
+    m_gallery->clear();
+    for (const auto& image : BackgroundLibrary::images()) {
+        auto* item = new QListWidgetItem(
+          BackgroundLibrary::thumbnail(image.path, THUMBNAIL_SIZE), QString());
+        item->setData(Qt::UserRole, image.path);
+        item->setToolTip(image.name);
+        m_gallery->addItem(item);
+    }
+    m_updating = updating;
+}
+
+void BackgroundEditor::selectDefaultImage()
+{
+    const auto images = BackgroundLibrary::images();
+    if (!images.isEmpty()) {
+        m_settings.imagePath = images.first().path;
+    }
 }
 
 void BackgroundEditor::notify()

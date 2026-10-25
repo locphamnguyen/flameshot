@@ -158,8 +158,11 @@ In case of doubt choose the first or the second command as shortcut in your favo
 Flameshot can put a capture on a decorative background before exporting it, similar to
 [beautiFULLshot](https://github.com/itsddvn/beautiFULLshot):
 
-- Backgrounds: 24 gradient presets, a solid color, the average color of the capture edges, a
-  custom image (with optional blur) or transparent.
+- Backgrounds: 24 gradient presets, a solid color, the average color of the capture edges, an
+  image (with optional blur) or transparent.
+- Images: pick one of the 36 photos bundled with Flameshot (see `data/backgrounds/README.md` for
+  credits), or add your own with "Add from computer...". Added images are copied to the
+  `backgrounds` folder next to the config file and stay in the gallery.
 - Padding, corner radius, drop shadow, border and an output aspect ratio (1:1, 16:9, 9:16, 4:5...).
 
 There are three ways to use it:
